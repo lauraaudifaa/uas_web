@@ -281,3 +281,90 @@
                 this.style.transform = 'translateY(0)';
             });
         });
+
+        // === Tambahan Animasi Baru ===
+
+// 1. Reveal text di hero saat load
+document.addEventListener('DOMContentLoaded', () => {
+    const reveals = document.querySelectorAll('.reveal');
+    reveals.forEach((el, index) => {
+        setTimeout(() => {
+            el.classList.add('active');
+        }, index * 300);
+    });
+});
+
+// 2. Parallax sederhana pada scroll
+window.addEventListener('scroll', () => {
+    const parallax = document.querySelector('.parallax');
+    if (parallax) {
+        let scrolled = window.pageYOffset;
+        let rate = scrolled * -0.5;
+        parallax.style.transform = `translateY(${rate}px)`;
+    }
+});
+
+// 3. Counter animasi angka skill
+const counters = document.querySelectorAll('.counter');
+const counterObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const counter = entry.target;
+            const target = parseInt(counter.textContent);
+            counter.textContent = '0';
+            let count = 0;
+            const increment = target / 80;
+            const timer = setInterval(() => {
+                count += increment;
+                if (count >= target) {
+                    counter.textContent = target;
+                    clearInterval(timer);
+                } else {
+                    counter.textContent = Math.ceil(count);
+                }
+            }, 30);
+            counterObserver.unobserve(counter);
+        }
+    });
+}, { threshold: 0.7 });
+
+counters.forEach(counter => {
+    counterObserver.observe(counter);
+});
+
+// 4. Vanilla Tilt untuk 3D hover effect
+VanillaTilt.init(document.querySelectorAll("[data-tilt]"), {
+    max: 15,
+    speed: 400,
+    glare: true,
+    "max-glare": 0.3,
+});
+
+// 5. Fade-up scroll animation umum (menggantikan observer lama dengan yang lebih fleksibel)
+const fadeUps = document.querySelectorAll('.fade-up');
+const fadeObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+            fadeObserver.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+fadeUps.forEach(el => fadeObserver.observe(el));
+
+// 6. Tambah lebih banyak floating particles secara dinamis
+heroSection = document.querySelector('.hero-section');
+for (let i = 0; i < 15; i++) {
+    const particle = document.createElement('div');
+    particle.classList.add('floating-particle');
+    const size = Math.random() * 25 + 10;
+    particle.style.width = `${size}px`;
+    particle.style.height = `${size}px`;
+    particle.style.top = `${Math.random() * 100}%`;
+    particle.style.left = `${Math.random() * 100}%`;
+    particle.style.animationDelay = `${Math.random() * 20}s`;
+    particle.style.animationDuration = `${Math.random() * 20 + 20}s`;
+    particle.style.backgroundColor = `rgba(255, 255, 255, ${Math.random() * 0.15 + 0.05})`;
+    heroSection.appendChild(particle);
+}
